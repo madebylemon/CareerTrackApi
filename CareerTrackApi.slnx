@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CareerTrackApi.Api/CareerTrackApi.Api.csproj" />
+  <Project Path="CareerTrackApi.Application/CareerTrackApi.Application.csproj" />
+  <Project Path="CareerTrackApi.Domain/CareerTrackApi.Domain.csproj" />
+  <Project Path="CareerTrackApi.Infrastructure/CareerTrackApi.Infrastructure.csproj" />
+</Solution>
