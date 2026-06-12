@@ -5,7 +5,7 @@ import random
 
 BASE_URL = "http://localhost:5145"
 
-# Hàm gửi HTTP Request dùng thư viện built-in urllib
+# Ham gui HTTP Request dung thu vien built-in urllib
 def send_request(url, method="GET", data=None, token=None):
     headers = {"Content-Type": "application/json"}
     if token:
@@ -24,76 +24,76 @@ def send_request(url, method="GET", data=None, token=None):
         body = e.read().decode("utf-8")
         try:
             err_json = json.loads(body)
-            print(f"❌ HTTP Error {e.code}: {err_json}")
+            print(f"Error HTTP {e.code}: {err_json}")
         except:
-            print(f"❌ HTTP Error {e.code}: {body}")
+            print(f"Error HTTP {e.code}: {body}")
         raise e
 
-# Kịch bản chạy demo
+# Kich ban chay demo
 def run_demo():
-    print("🚀 Bắt đầu chương trình DEMO CareerTrackApi...\n")
+    print("=== Bat dau chuong trinh DEMO CareerTrackApi ===\n")
     
-    # 1. Đăng ký tài khoản mới
+    # 1. Dang ky tai khoan moi
     email = f"demo_user_{random.randint(1000, 9999)}@example.com"
     password = "password123"
-    print(f"👤 1. Đăng ký tài khoản mới: {email}")
+    print(f"1. Dang ky tai khoan moi: {email}")
     register_res = send_request("/api/auth/register", "POST", {"email": email, "password": password})
-    print(f"✅ Đăng ký thành công! User ID: {register_res['userId']}\n")
+    print(f"Success! User ID: {register_res['userId']}\n")
     
-    # 2. Đăng nhập hệ thống
-    print(f"🔑 2. Đăng nhập hệ thống...")
+    # 2. Dang nhap he thong
+    print(f"2. Dang nhap he thong...")
     login_res = send_request("/api/auth/login", "POST", {"email": email, "password": password})
     token = login_res["token"]
-    print(f"✅ Đăng nhập thành công! JWT Token nhận được (rút gọn): {token[:40]}...\n")
+    print(f"Success! JWT Token nhan duoc (rut gon): {token[:40]}...\n")
     
-    # 3. Lấy thông tin profile người dùng hiện tại
-    print(f"🔍 3. Lấy thông tin tài khoản hiện tại (/api/users/me)...")
+    # 3. Lay thong tin profile nguoi dung hien tai
+    print(f"3. Lay thong tin tai khoan hien tai (/api/users/me)...")
     profile = send_request("/api/users/me", "GET", token=token)
-    print(f"✅ Thông tin hồ sơ: ID={profile['id']}, Email={profile['email']}, Tạo lúc={profile['createdAt']}\n")
+    print(f"Success! Thong tin ho so: ID={profile['id']}, Email={profile['email']}, Tao luc={profile['createdAt']}\n")
     
-    # 4. Tạo đơn ứng tuyển mới
-    print(f"💼 4. Tạo đơn ứng tuyển mới (Microsoft - Software Engineer)...")
+    # 4. Tao don ung tuyen moi
+    print(f"4. Tao don ung tuyen moi (Microsoft - Software Engineer)...")
     app_data = {
         "companyName": "Microsoft",
         "roleTitle": "Software Engineer II",
         "status": "Applied",
         "dateApplied": "2026-06-12T08:00:00Z",
-        "notes": "Ứng tuyển qua cổng thông tin Microsoft Careers."
+        "notes": "Ung tuyen qua cong thong tin Microsoft Careers."
     }
     app = send_request("/api/applications", "POST", app_data, token=token)
     app_id = app["id"]
-    print(f"✅ Tạo thành công đơn ứng tuyển! ID đơn: {app_id}, Trạng thái: {app['status']}\n")
+    print(f"Success! Tao thanh cong don ung tuyen! ID don: {app_id}, Trang thai: {app['status']}\n")
     
-    # 5. Cập nhật trạng thái đơn ứng tuyển (PATCH)
-    print(f"🔄 5. Cập nhật trạng thái đơn ứng tuyển sang PhoneScreen (PATCH)...")
+    # 5. Cap nhat trang thai don ung tuyen (PATCH)
+    print(f"5. Cap nhat trang thai don ung tuyen sang PhoneScreen (PATCH)...")
     patched = send_request(f"/api/applications/{app_id}/status", "PATCH", {"status": "PhoneScreen"}, token=token)
-    print(f"✅ Cập nhật trạng thái thành công! Trạng thái mới: {patched['status']}\n")
+    print(f"Success! Cap nhat trang thai thanh cong! Trang thai moi: {patched['status']}\n")
     
-    # 6. Thêm cuộc phỏng vấn lồng trong đơn ứng tuyển
-    print(f"📅 6. Lên lịch phỏng vấn HR (vòng PhoneScreen)...")
+    # 6. Them cuoc phong van long trong don ung tuyen
+    print(f"6. Len lich phong van HR (vong PhoneScreen)...")
     interview_data = {
         "interviewType": "HR",
         "scheduledAt": "2026-06-16T15:00:00Z",
-        "notes": "Trao đổi với HR về mức lương và kinh nghiệm làm việc."
+        "notes": "Trao doi voi HR ve muc luong va kinh nghiem lam viec."
     }
     interview = send_request(f"/api/applications/{app_id}/interviews", "POST", interview_data, token=token)
-    print(f"✅ Lên lịch phỏng vấn thành công! Vòng: {interview['interviewType']}, Lịch hẹn: {interview['scheduledAt']}\n")
+    print(f"Success! Len lich phong van thanh cong! Vong: {interview['interviewType']}, Lich hen: {interview['scheduledAt']}\n")
     
-    # 7. Xem danh sách đơn ứng tuyển
-    print(f"📋 7. Xem danh sách tất cả đơn ứng tuyển của User...")
+    # 7. Xem danh sach don ung tuyen
+    print(f"7. Xem danh sach tat ca don ung tuyen cua User...")
     apps = send_request("/api/applications", "GET", token=token)
     for a in apps:
-        print(f"   - [{a['status']}] {a['companyName']} - {a['roleTitle']} (Nộp ngày: {a['dateApplied']})")
+        print(f"   - [{a['status']}] {a['companyName']} - {a['roleTitle']} (Nop ngay: {a['dateApplied']})")
     print()
     
-    # 8. Xem danh sách các cuộc phỏng vấn của đơn này
-    print(f"📋 8. Xem danh sách các cuộc phỏng vấn cho đơn ứng tuyển ID {app_id}...")
+    # 8. Xem danh sach cac cuoc phong van cua don nay
+    print(f"8. Xem danh sach cac cuoc phong van cho don ung tuyen ID {app_id}...")
     interviews = send_request(f"/api/applications/{app_id}/interviews", "GET", token=token)
     for i in interviews:
-        print(f"   - Vòng: {i['interviewType']} | Hẹn lúc: {i['scheduledAt']} | Ghi chú: {i['notes']}")
+        print(f"   - Vong: {i['interviewType']} | Hen luc: {i['scheduledAt']} | Ghi chu: {i['notes']}")
     print()
     
-    print("🎯 DEMO HOÀN THÀNH THÀNH CÔNG! Dự án hoạt động hoàn hảo! 🎯")
+    print("*** DEMO HOAN THANH THANH CONG! ***")
 
 if __name__ == "__main__":
     run_demo()
